@@ -35,7 +35,7 @@ spec:
     - name: revision
       value: "{{ revision }}"
     - name: storage_secret
-      default: "cos-bucket"
+      value: "cos-bucket"
   pipelineSpec:
     params:
       - name: repo_url
