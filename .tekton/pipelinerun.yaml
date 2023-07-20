@@ -84,6 +84,8 @@ spec:
                 eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
 
+                set | grep MODEL
+                
                 TOKEN=`curl -X "POST" "https://iam.cloud.ibm.com/oidc/token" \
                     -H 'Accept: application/json' \
                     -H 'Content-Type: application/x-www-form-urlencoded' \
