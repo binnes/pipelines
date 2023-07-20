@@ -121,7 +121,7 @@ spec:
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
 
                 cat << EOF > Containerfile
-                FROM image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/watson-nlp-runtime as base
+                FROM image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/watson-nlp-runtime:1.1.32 as base
                 ENV LOCAL_MODELS_DIR=/app/models
                 ENV ACCEPT_LICENSE=true
                 COPY ${MODEL_NAME} /app/models/
