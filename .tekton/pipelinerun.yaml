@@ -78,7 +78,7 @@ spec:
                 - name: APIKEY
                   valueFrom:
                     secretKeyRef:
-                      name: $(params.cos-bucket)
+                      name: $(params.storage_secret)
                       key: "api-key"
               script: |
                 eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
