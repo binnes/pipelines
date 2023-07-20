@@ -72,7 +72,7 @@ spec:
             - name: output
           steps:
             - name: download-model
-              image: registry.access.redhat.com/ubi9/ubi
+              image: example-registry-quay-openshift-operators.bi-ocp-162e406f043e20da9b0ef0731954a894-0000.eu-gb.containers.appdomain.cloud/brian/ubi-micro-jq:latest
               workingDir: $(workspaces.output.path)
               env:
                 - name: APIKEY
@@ -83,8 +83,6 @@ spec:
               script: |
                 eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
-
-                echo "API KEY = ${APIKEY}"
 
                 TOKEN=`curl -X "POST" "https://iam.cloud.ibm.com/oidc/token" \
                     -H 'Accept: application/json' \
