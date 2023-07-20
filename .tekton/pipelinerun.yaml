@@ -131,7 +131,7 @@ spec:
       - name: build-image
         taskRef:
           name: buildah
-          kind: ClusterTask
+          kind: Task
         params:
         - name: IMAGE
           value: $(tasks.download-model.results.model-name)
@@ -140,6 +140,9 @@ spec:
         workspaces:
           - name: source
             workspace: source
+          - name: buildah-temp
+            workspace: buildah
+        volumeMounts:
         runAfter:
         - generate-containerfile
   workspaces:
@@ -151,8 +154,16 @@ spec:
         resources:
           requests:
             storage: 10Gi
-  # This workspace will inject secret to help the git-clone task to be able to
-  # checkout the private repositories
+  - name: buildah
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+# This workspace will inject secret to help the git-clone task to be able to
+# checkout the private repositories
   - name: basic-auth
     secret:
       secretName: "{{ git_auth_secret }}"
