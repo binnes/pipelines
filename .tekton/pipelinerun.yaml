@@ -125,7 +125,7 @@ spec:
                 FROM ${WATSON_RUNTIME_BASE} as base
                 ENV LOCAL_MODELS_DIR=/app/models
                 ENV ACCEPT_LICENSE=true
-                COPY %{MODEL_NAME} /app/models/
+                COPY ${MODEL_NAME} /app/models/
                 EOF
 
                 cat Containerfile
