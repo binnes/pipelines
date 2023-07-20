@@ -80,12 +80,17 @@ spec:
                     secretKeyRef:
                       name: $(params.storage_secret)
                       key: "api-key"
+              results:
+                - name: model-name
+                  description: the name from the model config.json file
               script: |
                 eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
+                
+                echo ${MODEL_NAME} | tee $(results.model-name.path)
 
                 set | grep MODEL
-                
+
                 TOKEN=`curl -X "POST" "https://iam.cloud.ibm.com/oidc/token" \
                     -H 'Accept: application/json' \
                     -H 'Content-Type: application/x-www-form-urlencoded' \
@@ -98,6 +103,18 @@ spec:
 
                 ls -al
                 exit 0
+      - name: build-image
+        taskRef:
+          name: buildah
+          kind: ClusterTask
+        params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        workspaces:
+        - name: output
+          workspace: source
+        runAfter:
+        - download-model
   workspaces:
   - name: source
     volumeClaimTemplate:
