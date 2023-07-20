@@ -152,6 +152,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        storageClassName: ibmc-vpcblock-odf-5iops
         resources:
           requests:
             storage: 10Gi
@@ -160,6 +161,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        storageClassName: ibmc-vpcblock-odf-5iops
         resources:
           requests:
             storage: 50Gi
