@@ -34,10 +34,13 @@ spec:
       value: "{{ repo_url }}"
     - name: revision
       value: "{{ revision }}"
+    - name: storage_secret
+      default: "cos-bucket"
   pipelineSpec:
     params:
       - name: repo_url
       - name: revision
+      - name: storage_secret
     workspaces:
       - name: source
       - name: basic-auth
@@ -58,20 +61,42 @@ spec:
             value: $(params.revision)
       # Customize this task if you like, or just do a taskRef
       # to one of the hub task.
-      - name: noop-task
+      - name: download-model
         runAfter:
           - fetch-repository
         workspaces:
-          - name: source
+          - name: output
             workspace: source
         taskSpec:
           workspaces:
-            - name: source
+            - name: output
           steps:
-            - name: noop-task
-              image: registry.access.redhat.com/ubi9/ubi-micro
-              workingDir: $(workspaces.source.path)
+            - name: download-model
+              image: registry.access.redhat.com/ubi9/ubi
+              workingDir: $(workspaces.output.path)
+              env:
+                - name: APIKEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: $(params.cos-bucket)
+                      key: "api-key"
               script: |
+                eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
+                eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
+
+                echo "API KEY = ${APIKEY}"
+
+                TOKEN=`curl -X "POST" "https://iam.cloud.ibm.com/oidc/token" \
+                    -H 'Accept: application/json' \
+                    -H 'Content-Type: application/x-www-form-urlencoded' \
+                    --data-urlencode "apikey=${APIKEY}" \
+                    --data-urlencode "response_type=cloud_iam" \
+                    --data-urlencode "grant_type=urn:ibm:params:oauth:grant-type:apikey" \
+                    -s | jq -r '.access_token'`
+
+                curl https://${MODEL_STORE_ENDPOINT}/${MODEL_STORE_BUCKET}/${MODEL_STORE_KEY} -H "authorization: bearer $TOKEN" -o ${MODEL_NAME}
+
+                ls -al
                 exit 0
   workspaces:
   - name: source
@@ -81,7 +106,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 10Gi
   # This workspace will inject secret to help the git-clone task to be able to
   # checkout the private repositories
   - name: basic-auth

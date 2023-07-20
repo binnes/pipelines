@@ -1,0 +1,8 @@
+{
+    "MODEL_NAME": "uk_post_codes",
+    "MODEL": {
+        "MODEL_STORE_KEY": "uk_post_codes",
+        "MODEL_STORE_BUCKET": "pipeline-demo",
+        "MODEL_STORE_ENDPOINT": "s3.eu-gb.cloud-object-storage.appdomain.cloud"
+    }
+}
