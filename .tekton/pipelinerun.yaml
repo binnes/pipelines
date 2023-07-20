@@ -109,7 +109,7 @@ spec:
           kind: ClusterTask
         params:
         - name: IMAGE
-          value: $(tasks.download-model.model-name)
+          value: $(tasks.download-model.results.model-name)
         workspaces:
           - name: source
             workspace: source
