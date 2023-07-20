@@ -142,7 +142,7 @@ spec:
           - name: source
             workspace: source
         runAfter:
-        - download-model
+        - generate-containerfile
   workspaces:
   - name: source
     volumeClaimTemplate:
