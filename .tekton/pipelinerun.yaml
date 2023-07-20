@@ -70,6 +70,9 @@ spec:
         taskSpec:
           workspaces:
             - name: output
+          results:
+            - name: model-name
+              description: the name from the model config.json file
           steps:
             - name: download-model
               image: example-registry-quay-openshift-operators.bi-ocp-162e406f043e20da9b0ef0731954a894-0000.eu-gb.containers.appdomain.cloud/brian/ubi-micro-jq:latest
@@ -80,9 +83,6 @@ spec:
                     secretKeyRef:
                       name: $(params.storage_secret)
                       key: "api-key"
-              results:
-                - name: model-name
-                  description: the name from the model config.json file
               script: |
                 eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
