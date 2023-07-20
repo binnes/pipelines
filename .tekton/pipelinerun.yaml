@@ -103,6 +103,32 @@ spec:
 
                 ls -al
                 exit 0
+      - name: generate-containerfile
+        runAfter:
+          - download-model
+        workspaces:
+          - name: output
+            workspace: source
+        taskSpec:
+          workspaces:
+            - name: output
+          steps:
+            - name: generate-containerfile
+              image: example-registry-quay-openshift-operators.bi-ocp-162e406f043e20da9b0ef0731954a894-0000.eu-gb.containers.appdomain.cloud/brian/ubi-micro-jq:latest
+              workingDir: $(workspaces.output.path)
+              script: |
+                eval "export $(cat model/config.json | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
+                eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
+
+                cat << EOF > Containerfile
+                ARG WATSON_RUNTIME_BASE="cp.icr.io/cp/ai/watson-nlp-runtime:1.1.32"
+                FROM ${WATSON_RUNTIME_BASE} as base
+                ENV LOCAL_MODELS_DIR=/app/models
+                ENV ACCEPT_LICENSE=true
+                COPY %{MODEL_NAME} /app/models/
+                EOF
+
+                cat Containerfile
       - name: build-image
         taskRef:
           name: buildah
@@ -110,6 +136,8 @@ spec:
         params:
         - name: IMAGE
           value: $(tasks.download-model.results.model-name)
+        - name: DOCKERFILE
+          value: Containerfile
         workspaces:
           - name: source
             workspace: source
