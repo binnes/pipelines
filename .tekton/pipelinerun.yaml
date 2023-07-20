@@ -121,7 +121,7 @@ spec:
                 eval "export $(echo ${MODEL} | jq -r 'to_entries | map("\(.key)=\(.value)") | @sh')"
 
                 cat << EOF > Containerfile
-                FROM example-registry-quay-openshift-operators.bi-ocp-162e406f043e20da9b0ef0731954a894-0000.eu-gb.containers.appdomain.cloud/brian/watson-nlp-runtime:1.1.32 as base
+                FROM cp.icr.io/cp/ai/watson-nlp-runtime:1.1.32 as base
                 ENV LOCAL_MODELS_DIR=/app/models
                 ENV ACCEPT_LICENSE=true
                 COPY ${MODEL_NAME} /app/models/
