@@ -141,22 +141,11 @@ spec:
         workspaces:
           - name: source
             workspace: source
-          - name: buildah-temp
-            workspace: buildah
         volumeMounts:
         runAfter:
         - generate-containerfile
   workspaces:
   - name: source
-    volumeClaimTemplate:
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ibmc-vpcblock-odf-5iops
-        resources:
-          requests:
-            storage: 10Gi
-  - name: buildah
     volumeClaimTemplate:
       spec:
         accessModes:

@@ -117,5 +117,3 @@ spec:
         at the root of the Workspace with name config.json or .dockerconfigjson.
       name: dockerconfig
       optional: true
-    - name: buildah-temp
-      mountPath: /var/temp
