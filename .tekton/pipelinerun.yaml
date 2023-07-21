@@ -141,6 +141,8 @@ spec:
         workspaces:
           - name: source
             workspace: source
+          - name: containers
+            workspace: containers
         volumeMounts:
         runAfter:
         - generate-containerfile
@@ -150,9 +152,19 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
+        storageClassName: ibmc-vpcblock-odf-5iops
         resources:
           requests:
-            storage: 500Gi
+            storage: 10Gi
+  - name: containers
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ibmc-vpcblock-odf-5iops
+        resources:
+          requests:
+            storage: 200Gi
 # This workspace will inject secret to help the git-clone task to be able to
 # checkout the private repositories
   - name: basic-auth

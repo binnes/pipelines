@@ -102,13 +102,7 @@ spec:
         capabilities:
           add:
             - SETFCAP
-      volumeMounts:
-        - mountPath: /var/lib/containers
-          name: varlibcontainers
       workingDir: $(workspaces.source.path)
-  volumes:
-    - emptyDir: {}
-      name: varlibcontainers
   workspaces:
     - name: source
     - description: >-
@@ -117,3 +111,5 @@ spec:
         at the root of the Workspace with name config.json or .dockerconfigjson.
       name: dockerconfig
       optional: true
+    - name: containers
+      mountPath: /var/lib/containers
