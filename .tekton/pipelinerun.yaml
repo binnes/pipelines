@@ -153,7 +153,7 @@ spec:
         storageClassName: ibmc-vpcblock-odf-5iops
         resources:
           requests:
-            storage: 50Gi
+            storage: 200Gi
 # This workspace will inject secret to help the git-clone task to be able to
 # checkout the private repositories
   - name: basic-auth
